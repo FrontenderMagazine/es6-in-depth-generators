@@ -1,40 +1,59 @@
 # ES6 In Depth: Generators
 
-_[ES6 In Depth][1] is a series on new features being added to the JavaScript programming language in the 6th Edition of the ECMAScript standard, ES6 for short._
+_[ES6 в деталях][1] — это цикл статей о новых возможностях языка
+программирования JavaScript, появившихся в 6 редакции стандарта ECMAScript,
+кратко — ES6._
 
-I’m excited about today’s post. Today, we’re going to discuss the most magical feature in ES6.
+Мне не терпится вам всё рассказать. Сегодня мы будем обсуждать самую волшебную
+функцональность в ES6.
 
-What do I mean by “magical”? For starters, this feature is so different from things that already existed in JS that it may seem completely arcane at first. In a sense, it turns the normal behavior of the language inside out! If that’s not magic, I don’t know what is.
+Что я имел в виду под словом «волшебную»? Во-первых, эта функциональность
+настолько отличается от всего того, что уже есть в JS, что поначалу может
+показаться колдовством. В том смысле, что она выворачивает обычное поведение
+языка наизнанку! Если это не магия, но я не знаю, что это.
 
-Not only that: this feature’s power to simplify code and straighten out “callback hell” borders on the supernatural.
+Но не только поэтому. Возможности этой фичи по упрощению кода и устранению
+«ада коллбеков» граничат со сверхъестественными.
 
-Am I laying it on a bit thick? Let’s dive in and you can judge for yourself.
+Я излишне нахваливаю? Давайте углубимся, и вы сами рассудите.
 
 
-## Introducing ES6 generators
+## Знакомьтесь, генераторы ES6
 
-What are generators?
+Что такое, генераторы?
 
-Let’s start by looking at one.
+Начнём с того, что рассмотрим один такой:
 
     function* quips(name) {
-      yield "hello " + name + "!";
-      yield "i hope you are enjoying the blog posts";
+      yield "привет, " + name + "!";
+      yield "я надеюсь, вам нравятся статьи";
       if (name.startsWith("X")) {
-        yield "it's cool how your name starts with X, " + name;
+        yield "как круто, что ваше имя начинается с X, " + name;
       }
-      yield "see you later!";
+      yield "увидимся!";
     }
 
-This is some code for [a talking cat][2], possibly the most important kind of application on the Internet today. (Go ahead, [click the link, play with the cat][3]. When you’re thoroughly confused, come back here for the explanation.)
+Это часть кода для [говорящей кошки][2], возможно, самого важного типа
+приложений в интернете на сегодняшний день. (Давайте,
+[нажмите на ссылку, поиграйте с кошкой][2]. Когда вы окончательно запутаетесь,
+возвращайтесь сюда за объяснением.)
 
-It looks sort of like a function, right? This is called a _generator-function_ and it has a lot in common with functions. But you can see two differences right away:
+Выглядит как-то похоже на функцию, верно? Это называется, _функция-генератор_,
+и у неё есть много общего с обычными функциями. Мы вы можете заметить два
+отличия уже сейчас:
 
-*   Regular functions start with `function`. Generator-functions start with `function*`.
+*   Обычные функции начинаются с `function`. Функции-генераторы начинаются с
+    `function*`.
 
-*   Inside a generator-function, `yield` is a keyword, with syntax rather like `return`. The difference is that while a function (even a generator-function) can only return once, a generator-function can yield any number of times. The `yield` expression _suspends execution of the generator so it can be resumed again later._
+*   Внутри функции-генератора есть ключевое слово `yield` с синтаксисом, похожим
+    на `return`. Отличие в том, что функция (даже функция-генератор) может
+    вернуть значение только один раз, а функция-генератор может отдать значение
+    любое количество раз. Выражение `yield` _приостанавливает выполнение
+    генератора, так что его можно позже возобновить_.
 
-So that’s it, that’s the big difference between regular functions and generator-functions. Regular functions can’t pause themselves. Generator-functions can.
+Вот, именно в этом самая большая разница между обычными функциями и
+функциями-генераторами. Обычные функции не могут поставить себя на паузу.
+Функции-генераторы могут.
 
 
 ## What generators do
@@ -62,7 +81,7 @@ That’s why each time we called `iter.next()` above, we got a different string 
 
 On the last `iter.next()` call, we finally reached the end of the generator-function, so the `.done` field of the result is `true`. Reaching the end of a function is just like returning `undefined`, and that’s why the `.value` field of the result is `undefined`.
 
-Now might be a good time to go back to [the talking cat demo page][4] and really play around with the code. Try putting a `yield` inside a loop. What happens?
+Now might be a good time to go back to [the talking cat demo page][2] and really play around with the code. Try putting a `yield` inside a loop. What happens?
 
 In technical terms, each time a generator yields, its _stack frame_—the local variables, arguments, temporary values, and the current position of execution within the generator body—is removed from the stack. However, the Generator object keeps a reference to (or copy of) this stack frame, so that a later `.next()` call can reactivate it and continue execution.
 
@@ -251,8 +270,6 @@ Coming up: a feature that will _plug right in_ to the kind of code you write eve
 
  [1]: https://hacks.mozilla.org/category/es6-in-depth/
  [2]: http://people.mozilla.org/~jorendorff/demos/meow.html
- [3]: http://people.mozilla.org/~jorendorff/demos/meow.html
- [4]: http://people.mozilla.org/~jorendorff/demos/meow.html
  [5]: http://codepen.io/anon/pen/NqGgOQ
  [6]: http://gafter.blogspot.com/2007/07/internal-versus-external-iterators.html
  [7]: https://schani.wordpress.com/2014/06/06/generators-in-swift/
