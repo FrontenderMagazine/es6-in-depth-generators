@@ -1,4 +1,4 @@
-# ES6 In Depth: Generators
+# ES6 в деталях: Генераторы
 
 _[ES6 в деталях][1] — это цикл статей о новых возможностях языка
 программирования JavaScript, появившихся в 6 редакции стандарта ECMAScript,
@@ -13,7 +13,7 @@ _[ES6 в деталях][1] — это цикл статей о новых во�
 языка наизнанку! Если это не магия, но я не знаю, что это.
 
 Но не только поэтому. Возможности этой фичи по упрощению кода и устранению
-«ада коллбеков» граничат со сверхъестественными.
+«ада колбеков» граничат со сверхъестественными.
 
 Я излишне нахваливаю? Давайте углубимся, и вы сами рассудите.
 
@@ -268,7 +268,7 @@ _пользоваться_, но вот реализовывать их труд
 
 ## Generators and asynchronous code
 
-Here is some JS code I wrote a while back.
+Вот такой код JS я писал раньше:
 
               };
             })
@@ -277,9 +277,12 @@ Here is some JS code I wrote a while back.
       });
     });
 
-Maybe you’ve seen something like this in your own code. [Asynchronous APIs][9] typically require a callback, which means writing an extra anonymous function every time you do something. So if you have a bit of code that does three things, rather than three lines of code, you’re looking at three _indentation levels_ of code.
+Может быть, вы встретите что-то похожее в вашем коде. [Асинхронные APIs][9]
+обычно требуют колбеков, поэтому приходится писать очередную анонимную
+функцию всякий раз, как что-то делаешь. И если у вас есть кусок кода, который
+делает три вещи, вместо трёх строчек кода вы видите три _уровня отступов_ кода.
 
-Here is some more JS code I’ve written:
+Вот ещё кое-что из того JS-кода, что я написал:
 
     }).on('close', function () {
       done(undefined, undefined);
@@ -287,24 +290,30 @@ Here is some more JS code I’ve written:
       done(error);
     });
 
-Asynchronous APIs have error-handling conventions rather than exceptions. Different APIs have different conventions. In most of them, errors are silently dropped by default. In some of them, even ordinary successful completion is dropped by default.
+В асинхронных API используются соглашения об обработке ошибок вместо исключений.
+У разных API могут быть разные соглашения. В большинстве из них ошибки просто
+игнорируются по умолчанию. В некоторых из них игнорируется по умолчанию даже
+обычное успешное выполнение.
 
-Until now, these problems have simply been the price we pay for asynchronous programming. We have come to accept that asynchronous code just doesn’t look as nice and simple as the corresponding synchronous code.
+До нынешнего момента эти проблемы при были необходимой платой за асинхронное
+программирование. Мы свыклись с тем, что асинхронный код просто не выглядит
+так же красиво и просто, как такой же синхронный.
 
-Generators offer new hope that it doesn’t have to be this way.
+Генераторы дают нам новую надежду, что это не должно так оставаться.
 
-[Q.async()][10] is an experimental attempt at using generators with promises to produce async code that resembles the corresponding synchronous code. For example:
+[Q.async()][10] — это экспериментальная попытка сделать асинхронный код похожим
+на синхронный при помощи генераторов и промисов. К примеру:
 
-    // Synchronous code to make some noise.
+    // Синхронный код, производящий шум
     function makeNoise() {
       shake();
       rattle();
       roll();
     }
 
-    // Asynchronous code to make some noise.
-    // Returns a Promise object that becomes resolved
-    // when we're done making noise.
+    // Асинхронный код, производящий шум
+    // Возвращает объект Promise, который разрешится,
+    // когда мы закончим шуметь
     function makeNoise_async() {
       return Q.async(function* () {
         yield shake_async();
@@ -313,9 +322,13 @@ Generators offer new hope that it doesn’t have to be this way.
       });
     }
 
-The main difference is that the asynchronous version must add the `yield` keyword each place where it calls an asynchronous function.
+Основное отличие в том, что в асинхронной версии нужно добавлять ключевое слово
+`yield` перед любым вызовом асинхронной функции.
 
-Adding a wrinkle like an `if` statement or a `try`/`catch` block in the `Q.async` version is exactly like adding it to the plain synchronous version. Compared to other ways of writing async code, this feels a lot less like learning a whole new language.
+Если добавление конструкции вроде `if` или `try`/`catch` в версию `Q.async`,
+то всё будет работать точно так же, как если бы их добавили в синхронный код.
+По сравнению с другими способами написания асинхронного кода этот меньше всего
+ощущается как изучение нового языка.
 
 If you’ve gotten this far, you might enjoy James Long’s [very detailed post on this topic][11].
 
