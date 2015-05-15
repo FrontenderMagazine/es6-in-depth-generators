@@ -22,7 +22,7 @@ _[ES6 в деталях][1] — это цикл статей о новых во�
 
 Что такое, генераторы?
 
-Начнём с того, что рассмотрим один такой:
+Начнём с рассмотрения одного генератора:
 
     function* quips(name) {
       yield "привет, " + name + "!";
@@ -33,13 +33,13 @@ _[ES6 в деталях][1] — это цикл статей о новых во�
       yield "увидимся!";
     }
 
-Это часть кода для [говорящей кошки][2], возможно, самого важного типа
+Это часть кода для [говорящей кошки][2], возможно, самого важного вида
 приложений в интернете на сегодняшний день. (Давайте,
 [нажмите на ссылку, поиграйте с кошкой][2]. Когда вы окончательно запутаетесь,
 возвращайтесь сюда за объяснением.)
 
 Выглядит как-то похоже на функцию, верно? Это называется, _функция-генератор_,
-и у неё есть много общего с обычными функциями. Мы вы можете заметить два
+и у неё есть много общего с обычными функциями. Но вы можете заметить два
 отличия уже сейчас:
 
 *   Обычные функции начинаются с `function`. Функции-генераторы начинаются с
@@ -56,52 +56,88 @@ _[ES6 в деталях][1] — это цикл статей о новых во�
 Функции-генераторы могут.
 
 
-## What generators do
+## Что делают генераторы
 
-What happens when you call the `quips()` generator-function?
+Что произойдёт, если запустить функцию-генератор `quips()`?
 
     > var iter = quips("jorendorff");
       [object Generator]
     > iter.next()
-      { value: "hello jorendorff!", done: false }
+      { value: "привет, jorendorff!", done: false }
     > iter.next()
-      { value: "i hope you are enjoying the blog posts", done: false }
+      { value: "я надеюсь, вам нравятся статьи", done: false }
     > iter.next()
-      { value: "see you later!", done: false }
+      { value: "увидимся!", done: false }
     > iter.next()
       { value: undefined, done: true }
 
-You’re probably very used to ordinary functions and how they behave. When you call them, they start running right away, and they run until they either return or throw. All this is second nature to any JS programmer.
+Возможно, вы очень привыкли к обычным функциям и тому, как они себя ведут.
+Когда их вызывают, они сразу же начинают выполняться и выполняются до тех пор,
+пока не вернут значение или не бросят исключение. Такое поведение как само собой
+разумеющееся для любого JS-программиста.
 
-Calling a generator looks just the same: `quips("jorendorff")`. But when you call a generator, it doesn’t start running yet. Instead, it returns a paused _Generator object_ (called `iter` in the example above). You can think of this Generator object as a function call, frozen in time. Specifically, it’s frozen right at the top of the generator-function, just before running its first line of code.
+Вызов генератора выглядит так же: `quips("jorendorff")`. Но после того, как вы
+вызовете генератор, он ещё не начнёт выполняться. Вместо этого он вернёт
+приостановленный _объект Generator_ (в примере выше он под именем `iter`).
+Вы можте считать, что объект Generator — это вызов функции, замороженный во
+времени. Если точнее, он заморожен прямо в самом начале функции-генератора,
+перед первой строчкой кода.
 
-Each time you call the Generator object’s `.next()` method, the function call thaws itself out and runs until it reaches the next `yield` expression.
+Каждый раз, как вы вызываете метод `.next()` у объекта Generator, вызов функции
+оттаивает и выполняется, пока не достигнет следующего выражения `yield`.
 
-That’s why each time we called `iter.next()` above, we got a different string value. Those are the values produced by the `yield` expressions in the body of `quips()`.
+Вот почему в примере выше после вызовов `iter.next()` мы всякий раз получали
+новое строковое значение. Эти значения производятся выражениями `yield` в теле
+`quips()`.
 
-On the last `iter.next()` call, we finally reached the end of the generator-function, so the `.done` field of the result is `true`. Reaching the end of a function is just like returning `undefined`, and that’s why the `.value` field of the result is `undefined`.
+При последнем вызове `iter.next()` мы, наконец, достигли конца
+функции-генератора, так что поле `.done` результата стало равно `true`.
+Добраться до конца функции — это всё равно что вернуть `undefined`, и именно
+поэтому поле `.value` результата равно `undefined`.
 
-Now might be a good time to go back to [the talking cat demo page][2] and really play around with the code. Try putting a `yield` inside a loop. What happens?
+Похоже, сейчас самое время вернуться к [странице с говорящей кошкой][2] и
+как следует поиграться с кодом. Попробуйте добавить `yield` внутрь цикла.
+Что произойдёт?
 
-In technical terms, each time a generator yields, its _stack frame_—the local variables, arguments, temporary values, and the current position of execution within the generator body—is removed from the stack. However, the Generator object keeps a reference to (or copy of) this stack frame, so that a later `.next()` call can reactivate it and continue execution.
+Говоря техническим языком, каждый раз, когда генератор отдаёт значение, его
+_стековый кадр_: локальные переменные, аргументы, временные значения и текущая
+позиция точки выполнения внутри тела генератора — удаляется из стека.
+Однако, объект Generator хранит ссылку на этот стековый кадр (или его копию),
+так что последующий вызов `.next()` возобновит его и продолжит выполнение.
 
-It’s worth pointing out that **generators are not threads.** In languages with threads, multiple pieces of code can run at the same time, usually leading to race conditions, nondeterminism, and sweet sweet performance. Generators are not like that at all. When a generator runs, it runs in the same thread as the caller. The order of execution is sequential and deterministic, and never concurrent. Unlike system threads, a generator is only ever suspended at points marked by `yield` in its body.
+Стоит заметить, что **генераторы не потоки выполнения**. В языках с потоками
+различные куски кода могут выполняться одновременно, обычно приводя к состояниям
+гонки, недетерменированности и страстно желанному приросту производительности.
+Генераторы вообще на это не похожи. Когда генератор выполнятется, он работает
+в том же потоке, что и код его вызвавший. Порядок выполнения последователен
+и строго определён, и нет никакой параллельности. В отличие от системных
+потоков, генератор останавливается только на тех местах, где в коде есть
+`yield`.
 
-All right. We know what generators are. We’ve seen a generator run, pause itself, then resume execution. Now for the big question. How could this weird ability possibly be useful?
+Хорошо. Теперь мы знаем, что такое, генераторы. Мы видели, как генераторы
+выполняются, приостанавливаются и возобновляют выполнение. Теперь хороший
+вопрос: как эти странные возможности могут нам пригодиться?
 
 
-## Generators are iterators
+## Генераторы — итераторы
 
-Last week, we saw that ES6 iterators are not just a single built-in class. They’re an extension point of the language. You can create your own iterators just by implementing two methods: `[Symbol.iterator]()` and `.next()`.
+На прошлой неделе мы увидели, что в ES6 итераторы не просто один встроенный
+класс. Они — точка расширения языка. Вы можете создавать собственные итераторы,
+и для этого нужно лишь реализовать два метода: `[Symbol.iterator]()` и
+`.next()`.
 
-But implementing an interface is always at least a little work. Let’s see what an iterator implementation looks like in practice. As an example, let’s make a simple `range` iterator that simply counts up from one number to another, like an old-fashioned C `for (;;)` loop.
+Но реализация интерфейса — это всегда работа, по меньшей мере, небольшая.
+Взглянем, как реализация итератора выглядит на практике. В качестве примера
+возьмём простой итератор `range`, который всего-навсего считает от одного
+числа до другого, как в старомодном цикле `for (;;)` из C.
 
-    // This should "ding" three times
+    // Должно "прозвенеть" трижды
     for (var value of range(0, 3)) {
-      alert("Ding! at floor #" + value);
+      alert("Динь! на этаже № " + value);
     }
 
-Here’s one solution, using an ES6 class. (If the `class` syntax is not completely clear, don’t worry—we’ll cover it in a future blog post.)
+Вот одно решение, с использованием класса ES6. (Если синтаксис `class` вам
+не до конца ясен, не волнуйтесь, мы разберём его в одной из будущих статей.)
 
     class RangeIterator {
       constructor(start, stop) {
@@ -122,38 +158,56 @@ Here’s one solution, using an ES6 class. (If the `class` syntax is not complet
       }
     }
 
-    // Return a new iterator that counts up from 'start' to 'stop'.
+    // Возвращает новый итератор, который считает от 'start' до 'stop'.
     function range(start, stop) {
       return new RangeIterator(start, stop);
     }
 
-[See this code in action.][5]
+[Посмотрите на код в действии.][5]
 
-This is what implementing an iterator is like in [Java][6] or [Swift][7]. It’s not so bad. But it’s not exactly trivial either. Are there any bugs in this code? It’s not easy to say. It looks nothing like the original `for (;;)` loop we are trying to emulate here: the iterator protocol forces us to dismantle the loop.
+Так реализация итератора выглядит в [Java][6] или [Swift][7]. Неплохо. Но
+вместе с тем и нетривиально. Есть ли ошибки в этом коде? Трудно сказать. Это
+выглядит совершенно непохоже на изначальный цикл `for (;;)`, который мы пытаемся
+эмулировать: протокол интераторов заставляет нас разобрать этот цикл на части.
 
-At this point you might be feeling a little lukewarm toward iterators. They may be great to _use,_ but they seem hard to implement.
+В этом месте вы можете слегка охладеть к итераторам. Может, ими и здорово
+_пользоваться_, но вот реализовывать их трудно.
 
-It probably wouldn’t occur to you to suggest that we introduce a wild, mindbending new control flow structure to the JS language just to make iterators easier to build. But since we _do_ have generators, can we use them here? Let’s try it:
+Вам, возможно, не пришло бы в голову предлагать добавить новую, пугающую и
+мозголомную структуру потока выполнения в язык JS просто чтобы стало легче
+писать итераторы. Но раз уж нас _уже_ есть генераторы, можем ли мы их тут
+применить? Давайте попробуем:
 
     function* range(start, stop) {
       for (var i = start; i < stop; i++)
         yield i;
     }
 
-[See this code in action.][8]
+[Посмотрите на код в действии.][8]
 
-The above 4-line generator is a drop-in replacement for the previous 23-line implementation of `range()`, including the entire `RangeIterator` class. This is possible because **generators are iterators.** All generators have a built-in implementation of `.next()` and `[Symbol.iterator]()`. You just write the looping behavior.
+Вот этот генератор из 4 строчек полностью заменяет предыдущую 23-строчную
+реализацию `range()`, включая весь класс `RangeIterator` целиком.
+Это возможно потому что **генераторы — это итераторы**. У всех генераторов есть
+встроенная реализация `.next()` и `[Symbol.iterator]()`. Всё, что вам нужно —
+это описать поведение цикла.
 
-Implementing iterators without generators is like being forced to write a long email entirely in the passive voice. When simply saying what you mean is not an option, what you end up saying instead can become quite convoluted. `RangeIterator` is long and weird because it has to describe the functionality of a loop without using loop syntax. Generators are the answer.
+Реализация итераторов без генераторов похоже на то, когда нужно написать длинное
+электронное письмо используя только пассивный залог. Когда нельзя просто сказать
+то, что имеется в виду, речь в итоге получается весьма запутанной.
+`RangeIterator` длинный и странный потому что он должен описывать
+функциональность цикла не используя синтаксис циклов. Генераторы — ответ на это.
 
-How else can we use the ability of generators to act as iterators?
+Для чего ещё можно применить возможность генераторов вести себя как итераторы?
 
-*   **Making any object iterable.** Just write a generator-function that traverses `this`, yielding each value as it goes. Then install that generator-function as the `[Symbol.iterator]` method of the object.
+*   **Преобразование любого объекта в итерируемый.** Просто напишите
+    функцию-генератор, которая перебирает `this`, отдавая каждое значение по
+    мере работы. Затем установите её объекту как метод `[Symbol.iterator]`.
 
-*   **Simplifying array-building functions.** Suppose you have a function that returns an array of results each time it’s called, like this one:
+*   **Упрощение функций, создающих массивы**. Предположим, у вас есть функция,
+    которая каждый раз при вызове возвращает массив, вроде такой:
 
-        // Divide the one-dimensional array 'icons'
-        // into arrays of length 'rowLength'.
+        // Делим одномерный массив 'icons'
+        // на массивы длиной 'rowLength'.
         function splitIntoRows(icons, rowLength) {
           var rows = [];
           var nRows = Math.ceil(icons.length / rowLength);
@@ -163,7 +217,7 @@ How else can we use the ability of generators to act as iterators?
           return rows;
         }
 
-    Generators make this kind of code a bit shorter:
+    Генераторы могут немного укоротить этот код:
 
         function* splitIntoRows(icons, rowLength) {
           var nRows = Math.ceil(icons.length / rowLength);
@@ -172,15 +226,30 @@ How else can we use the ability of generators to act as iterators?
           }
         }
 
-    The only difference in behavior is that instead of computing all the results at once and returning an array of them, this returns an iterator, and the results are computed one by one, on demand.
+    Единственная разница в поведении: вместо того, чтобы вычислять все
+    результаты сразу и возвращать их в виде массива, мы возвращаем итератор, и
+    результаты вычисляются по одному по мере неоходимости.
 
-*   **Results of unusual size.** You can’t build an infinite array. But you can return a generator that generates an endless sequence, and each caller can draw from it however many values they need.
+*   **Результаты необычной длины.** Вы не можете создать массив бесконечной
+    длины. Но вы можете вернуть генератор, который генерирует бесконечную
+    последовательность, и вызывающий код может взять оттуда сколько угодно
+    значений.
 
-*   **Refactoring complex loops.** Do you have a huge ugly function? Would you like to break it into two simpler parts? Generators are a new knife to add to your refactoring toolkit. When you’re facing a complicated loop, you can _factor out the part of the code that produces data_, turning it into a separate generator-function. Then change the loop to say `for (var data of myNewGenerator(args))`.
+*   **Рефакторинг сложных циклов.** У вас есть огромная страшная функция?
+    Вам хотелось бы разбить её на две более простые части? Генераторы — это
+    новый нож в ваш набор инструментов для рефакторинга. Когда вы сталкиваетесь
+    со сложным циклом, вы можете _вынести часть кода, производящего данные_,
+    превращая его в отдельную функцию-генератор. А затем изменить цикл на,
+    скажем, `for (var data of myNewGenerator(args))`.
 
-*   **Tools for working with iterables.** ES6 does _not_ provide an extensive library for filtering, mapping, and generally hacking on arbitrary iterable data sets. But generators are great for building the tools you need with just a few lines of code.
+*   **Утилиты для работы с итерируемыми объектами.** ES6 _не_ предоставляет
+    обширную библиотеку для фильтрации, мэппинга или вообще каких-нибудь
+    манипуляций с произвольными итерируемыми наборами данных. Но зато генераторы
+    отлично подходят написания для любой утилиты, какая вам понадобится, всего
+    в несколько строчек.
 
-    For example, suppose you need an equivalent of `Array.prototype.filter` that works on DOM NodeLists, not just Arrays. Piece of cake:
+    К примеру, предположим, вам нужен эквивалент `Array.prototype.filter`,
+    работающий с `NodeList` из DOM, а не просто с массивами. Проще простого:
 
         function* filter(test, iterable) {
           for (var item of iterable) {
@@ -189,9 +258,12 @@ How else can we use the ability of generators to act as iterators?
           }
         }
 
-So are generators useful? Sure. They are an astonshingly easy way to implement custom iterators, and iterators are the new standard for data and loops throughout ES6.
+Итак, генераторы полезны? Разумеется. Это удивительно лёгкий способ реализации
+собственных итераторов, а итераторы — это новый стандарт для данных и циклов
+во всём ES6.
 
-But that’s not all generators can do. It may not even turn out to be the most important thing they do.
+Но это ещё не всё, что генераторы могут делать. Может даже выясниться, что это
+даже не самое важное из того, что они делают.
 
 
 ## Generators and asynchronous code
