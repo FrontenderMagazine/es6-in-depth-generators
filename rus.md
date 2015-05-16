@@ -266,7 +266,7 @@ _пользоваться_, но вот реализовывать их труд
 даже не самое важное из того, что они делают.
 
 
-## Generators and asynchronous code
+## Генераторы и асинхронный код
 
 Вот такой код JS я писал раньше:
 
@@ -330,16 +330,28 @@ _пользоваться_, но вот реализовывать их труд
 По сравнению с другими способами написания асинхронного кода этот меньше всего
 ощущается как изучение нового языка.
 
-If you’ve gotten this far, you might enjoy James Long’s [very detailed post on this topic][11].
+Если вы дочитали до этого места, возможно, вам понравится
+[очень подробная статья по этой теме][11] от Джеймса Лонга (James Long).
 
-So generators are pointing the way to a new asynchronous programming model that seems better suited to human brains. This work is ongoing. Among other things, better syntax might help. [A proposal for async functions][12], building on both promises and generators, and taking inspiration from similar features in C#, is [on the table for ES7][13].
+Итак, генераторы освещают наш путь к новой модели
+асинхронного программирования, которая, кажется, лучше подходит для
+челевеческих мозгов.
+Эта работа ещё не окончена. Среди всего прочего, может помочь
+синтаксис получше.
+[Предложение асинхронных функций][12], основывающийся на промисах
+и генераторах и вдохновлённый похожими возможностями в C#, уже внесено
+в [таблицу на включение в ES7][13].
 
 
-## When can I use these crazy things?
+## Когда можно воспользоваться этими безумными вещами?
 
-On the server, you can use ES6 generators today in io.js (and in Node if you use the `--harmony` command-line option).
+На сервере вы можете применять генераторы уже сегодня в io.js
+(или в Node с параметром командной строки `--harmony`).
 
-In the browser, only Firefox 27+ and Chrome 39+ support ES6 generators so far. To use generators on the web today, you’ll need to use [Babel][14] or [Traceur][15] to translate your ES6 code to Web-friendly ES5.
+Из браузеров пока что генераторы поддерживают только Firefox 27+
+и Chrome 39+.
+Чтобы применять генераторы в вебе, придётся воспользоваться
+[Babel][14] или [Traceur][15] и транслировать код ES6 в понятный всем браузерам ES5.
 
 A few shout-outs to deserving parties: Generators were first implemented in JS by Brendan Eich; his design closely followed [Python generators][16] which were inspired by [Icon][17]. They shipped in Firefox 2.0 [back in 2006][18]. The road to standardization was bumpy, and the syntax and behavior changed a bit along the way. ES6 generators were implemented in both Firefox and Chrome by compiler hacker [Andy Wingo][19]. This work was sponsored by Bloomberg.
 
