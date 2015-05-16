@@ -333,37 +333,47 @@ _пользоваться_, но вот реализовывать их труд
 Если вы дочитали до этого места, возможно, вам понравится
 [очень подробная статья по этой теме][11] от Джеймса Лонга (James Long).
 
-Итак, генераторы освещают наш путь к новой модели
-асинхронного программирования, которая, кажется, лучше подходит для
-челевеческих мозгов.
-Эта работа ещё не окончена. Среди всего прочего, может помочь
-синтаксис получше.
-[Предложение асинхронных функций][12], основывающийся на промисах
-и генераторах и вдохновлённый похожими возможностями в C#, уже внесено
+Итак, генераторы освещают наш путь к новой модели асинхронного программирования,
+которая, кажется, лучше подходит для челевеческих мозгов.
+Эта работа ещё не окончена. Среди всего прочего, может помочь синтаксис получше.
+[Предложение асинхронных функций][12], работающих на промисах и генераторах и
+вдохновлённых похожими возможностями в C#, уже внесено
 в [таблицу на включение в ES7][13].
 
 
 ## Когда можно воспользоваться этими безумными вещами?
 
-На сервере вы можете применять генераторы уже сегодня в io.js
-(или в Node с параметром командной строки `--harmony`).
+На сервере вы можете применять генераторы уже сегодня в io.js (или в Node с
+параметром командной строки `--harmony`).
 
-Из браузеров пока что генераторы поддерживают только Firefox 27+
-и Chrome 39+.
-Чтобы применять генераторы в вебе, придётся воспользоваться
-[Babel][14] или [Traceur][15] и транслировать код ES6 в понятный всем браузерам ES5.
+Из браузеров пока что генераторы поддерживают только Firefox 27+ и Chrome 39+.
+Чтобы применять генераторы в вебе, придётся воспользоваться [Babel][14] или
+[Traceur][15] и транслировать код ES6 в понятный всем браузерам ES5.
 
-A few shout-outs to deserving parties: Generators were first implemented in JS by Brendan Eich; his design closely followed [Python generators][16] which were inspired by [Icon][17]. They shipped in Firefox 2.0 [back in 2006][18]. The road to standardization was bumpy, and the syntax and behavior changed a bit along the way. ES6 generators were implemented in both Firefox and Chrome by compiler hacker [Andy Wingo][19]. This work was sponsored by Bloomberg.
+Ещё кое-что, что нельзя не упомянуть: Генераторы впервые были реализованы в JS
+Бренданом Айком (Brendan Eich), его подход очень напоминал
+[генераторы в Python][16], которые в свою очередь были вдохнолены [Icon][17].
+Они появились в Firefox [в далёком 2006][18]. Путь к стандартизации был
+непростым, синтаксис и поведение за это время немного поменялись.
+Генераторы ES6 были реализованы как в Firefox, так и в Chrome мастером
+компиляции [Энди Винго (Andy Wingo)][19]. Его работа спонсировалась Bloomberg.
 
+## `yield;`
 
-## yield;
+О генераторах ещё можно многое рассказать. Мы не рассмотрели методы `.throw()`
+и `.return()`, необязательные аргументы `.next()` и синтаксис выражения
+`yield*`.
+Но я считаю, что эта статья уже достаточно длинная, и из неё и так можно узнать
+много нового. Как и генераторы, мы пока приостановимся и закончим позднее.
 
-There is more to say about generators. We didn’t cover the `.throw()` and `.return()` methods, the optional argument to `.next()`, or the `yield*` expression syntax. But I think this post is long and bewildering enough for now. Like generators themselves, we should pause, and take up the rest another time.
+Но на следующей неделе давайте немного сменим тему. Мы охатили две сложные темы
+подряд. Разве не было бы здорово в следующий раз поговорить о функциональности
+ES6, которая _не изменит_ вашу жизнь? О чем-нибудь простом и очевидно полезном?
+О чём-то, что вызовет у вас улыбку? В ES6 и такое есть.
 
-But next week, let’s change gears a little. We’ve tackled two deep topics in a row here. Wouldn’t it be great to talk about an ES6 feature that _won’t_ change your life? Something simple and obviously useful? Something that will make you smile? ES6 has a few of those too.
-
-Coming up: a feature that will _plug right in_ to the kind of code you write every day. Please join us next week for a look at ES6 template strings in depth.
-
+В следующей статье: фича, которая _прекрасно подойдёт_ к любому коду, который вы
+пишете каждый день. Присоединяйтесь на следующей неделе и мы рассмотрим
+шаблоны строк в деталях.
 
  [1]: https://hacks.mozilla.org/category/es6-in-depth/
  [2]: http://people.mozilla.org/~jorendorff/demos/meow.html
